@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>敏捷專案管理架構圖｜填空練習</title>
+<style>
+:root{--bg:#eef1f6;--card:#fff;--fg:#17233b;--mute:#6b7894;--line:#cfd8e6;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1624;--card:#18223a;--fg:#e6ecf7;--mute:#9aa8c4;--line:#2c3a58;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1624;--card:#18223a;--fg:#e6ecf7;--mute:#9aa8c4;--line:#2c3a58;color-scheme:dark}
+html,body{height:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.35 "PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:11}
+.bar{background:var(--card);border-bottom:1px solid var(--line);padding:6px 10px;display:grid;gap:5px}
+.r1{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;align-items:baseline}
+.bar h1{font-size:1rem;margin:0}
+#st{font-size:.85rem;color:var(--mute)}
+.row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+button,select{font:inherit;font-size:.85rem;padding:4px 9px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;cursor:pointer}
+button.on{background:#1f56b3;border-color:#1f56b3;color:#fff}
+button.go{background:#d9731a;border-color:#d9731a;color:#fff}
+#msg{min-height:1.1em;font-size:.8rem;color:#d9731a}
+#wrap{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
+#sz{position:relative}
+#cv{position:absolute;left:0;top:0;width:1288px;height:925px;transform-origin:0 0}
+.d{position:absolute;border-radius:10px}
+.bl{background:#1f56b3;clip-path:polygon(0 0,90% 0,100% 50%,90% 100%,0 100%,8% 50%);border-radius:0}
+.og{background:color-mix(in srgb,#d9731a 38%,var(--card))}
+.og2{background:#d9731a;clip-path:polygon(0 0,88% 0,100% 50%,88% 100%,0 100%);border-radius:0}
+.rel{background:color-mix(in srgb,#d9731a 13%,var(--card));border:2px solid #d9731a}
+.rd{background:color-mix(in srgb,#c0392b 28%,var(--card))}
+.it{background:color-mix(in srgb,#c0392b 11%,var(--card));border:2px solid #c0392b}
+.rb{background:color-mix(in srgb,#c0392b 42%,var(--card))}
+.tm{background:color-mix(in srgb,#2b8a73 20%,var(--card));border:2px solid #2b8a73}
+.ph{background:repeating-linear-gradient(45deg,var(--line) 0 8px,transparent 8px 16px);border:1px dashed var(--mute)}
+.doc{background:var(--card);border:1.5px solid var(--mute);box-shadow:3px 3px 0 var(--line);border-radius:3px}
+.pill{background:var(--card);border:2px solid #c0392b;border-radius:16px}
+.ppl{border-radius:50%}
+.dt{position:absolute;color:var(--mute);font-size:16px}
+.c{position:absolute}
+.c textarea{display:block;width:100%;min-height:26px;font:inherit;line-height:1.35;padding:2px 5px;border:1.5px solid var(--c);border-radius:6px;background:var(--card);color:var(--fg);resize:none;overflow:hidden}
+.c textarea:focus{outline:3px solid color-mix(in srgb,var(--c) 35%,transparent);outline-offset:1px}
+.big textarea,.big .a{font-size:17px;font-weight:700}
+.ti textarea,.ti .a{font-size:22px;font-weight:700}
+.hd textarea,.hd .a{font-weight:700}
+.c .a{display:none;padding:2px 5px;line-height:1.35;background:color-mix(in srgb,var(--card) 80%,transparent);border-radius:6px}
+.reveal .c .a,.c.off .a{display:block}
+.reveal .c textarea,.c.off textarea{display:none}
+.c.hid{visibility:hidden}
+.c.ok textarea{background:#d3f2dc;border-color:#1e9b52;color:#0e4d28}
+.c.bad textarea{background:#fde0e0;border-color:#d32f2f;color:#7a1111}
+</style>
+</head>
+<body>
+<div class="bar">
+ <div class="r1"><h1>敏捷專案管理架構圖｜填空練習</h1><span id="st"></span></div>
+ <div class="row" id="tabs"></div>
+ <div class="row">
+  <select id="mode" aria-label="批改方式"><option value="now">Enter 立即批改</option><option value="batch">全部打完交卷批改</option></select>
+  <button id="oth">其他階段：隱藏</button><button id="show">全部顯示</button><button id="hide">全部隱藏</button>
+  <button id="sub" class="go">交卷</button><button id="redo">錯題重做</button><button id="rst">重置</button>
+  <button id="zo" aria-label="縮小">－</button><button id="zi" aria-label="放大">＋</button>
+ </div>
+ <div id="msg" aria-live="polite"></div>
+</div>
+<div id="wrap"><div id="sz"><div id="cv"></div></div></div>
+<script>
+const SC=['#17233b','#1f56b3','#1f56b3','#d9731a','#1f56b3','#2b8a73'];
+const NAME=['標籤','階段①','階段②','階段③','階段④','階段⑤'];
+const R=[[60,100,720,330],[170,185,200,470],[330,185,240,690],[480,185,750,730],[1030,185,200,460],[10,640,340,180]];
+// [x,y,w,answer,cls]
+const C=[
+[[580,108,250,'敏捷專案管理架構圖','ti'],[92,190,84,'參與人員'],[92,232,56,'階段'],[92,297,84,'工作事項'],[92,392,56,'產出']],
+[[215,218,130,'可行性分析','big'],[195,278,130,'建立專案願景'],[195,304,150,'準備營運企劃案'],[215,462,80,'產品盒'],[205,592,110,'營運企劃案']],
+[[410,218,90,'起始','big'],[385,278,120,'發展專案章程'],[385,304,90,'辨識角色'],[385,330,148,'建立產品待辦清單'],[385,356,120,'進行高階估算'],[385,382,150,'建立產品地圖（用戶故事地圖）'],[395,445,90,'專案章程'],[395,520,70,'角色卡'],[395,597,105,'產品待辦清單'],[395,683,90,'高階估算'],[335,770,110,'產品地圖（用戶故事地圖）'],[448,775,100,'產品待辦清單']],
+[[745,203,110,'發布循環','big'],[590,240,64,'發布1'],[705,240,64,'發布2'],[905,240,64,'發布n'],[822,283,160,'單一發布內的工作','hd'],
+ [520,350,80,'發布規劃','hd'],[505,400,120,'分解用戶故事'],[505,428,250,'定義驗收標準/定義什麼是完成'],[505,456,235,'估算用戶故事點數（玩撲克牌）'],[505,484,130,'建立發布待辦清單'],[505,522,160,'分解為小的用戶故事'],[685,522,95,'撲克牌點數'],[785,522,105,'產品待辦清單'],
+ [760,392,175,'蒐集下一迭代用戶故事細節資料'],[795,333,85,'迭代循環','hd'],[722,360,62,'迭代1'],[790,360,62,'迭代2'],[882,360,62,'迭代n'],
+ [962,335,85,'發布與回顧','hd'],[955,398,100,'發布增量產品/成果'],[955,442,100,'進行發布回顧會議'],[880,490,118,'增量產品/成果'],[1000,490,66,'停車場圖'],[1000,520,56,'回饋'],
+ [822,560,160,'單一迭代內的工作','hd'],[560,697,102,'迭代規劃（細部規劃）'],[688,700,92,'每日站立會議'],
+ [812,598,142,'準備回答問題'],[812,623,142,'確認用戶故事'],[812,648,142,'蒐集下一迭代用戶故事細節'],[905,706,56,'除錯'],[812,737,142,'執行驗收測試'],[812,762,142,'準備測試案例'],[812,787,142,'測試新增的已完成增量產品'],[812,850,142,'完成增量產品'],
+ [985,697,95,'持續更新專案報告'],[1108,693,92,'進行迭代審查與回顧會議'],
+ [558,752,88,'用戶故事'],[688,752,100,'用戶故事看板'],[558,790,60,'工作1'],[622,790,60,'工作2'],[686,790,60,'工作3'],[558,828,88,'測試案例'],[688,828,70,'燃盡圖'],[558,862,118,'迭代1待辦清單'],[688,862,118,'發布1待辦清單'],[1150,815,56,'回饋']],
+[[1090,218,90,'結束','big'],[1090,278,125,'專案產出/成果'],[1090,304,125,'專案回顧會議'],[1090,330,125,'結束專案活動'],[1090,452,125,'發布結束後，如果不是最終發布，就進行下一個發布規劃；如果是最終發布，則直接進入結束流程。']],
+[[130,664,90,'敏捷團隊','hd'],[28,690,80,'利害關係人'],[28,725,56,'贊助者'],[215,735,90,'開發團隊','hd'],[30,775,80,'產品負責人'],[118,775,66,'敏捷教練'],[192,775,66,'團隊成員'],[264,775,56,'測試者']]];
+// [x,y,w,h,cls]
+const D=[[185,200,175,62,'bl'],[368,200,172,62,'bl'],[550,200,470,70,'og'],[1035,200,172,62,'bl'],
+[582,236,80,34,'pill'],[697,236,80,34,'pill'],[897,236,80,34,'pill'],
+[490,300,578,255,'rel'],[505,342,110,48,'og2'],[715,330,235,62,'rd'],[717,357,66,30,'pill'],[785,357,66,30,'pill'],[877,357,70,30,'pill'],[950,328,115,56,'og2'],
+[545,592,672,308,'it'],[548,690,125,55,'rb'],[676,690,110,50,'rb'],[805,594,158,100,'rb'],[805,730,158,110,'rb'],[805,845,158,36,'rb'],[975,690,115,55,'rb'],[1100,690,110,55,'rb'],
+[1090,365,115,75,'ph'],[20,655,310,150,'tm'],
+[215,400,70,55,'doc'],[200,530,100,55,'doc'],[395,475,60,40,'doc'],[395,548,60,44,'doc'],[395,630,60,48,'doc'],[450,640,18,120,'doc']];
+[[200,168],[232,168],[262,168],[398,168],[430,168],[600,168],[640,168],[680,168],[1090,168],[1122,168],[1154,168]].forEach(([x,y],i)=>D.push([x,y,24,24,'ppl:'+['#1f56b3','#d9731a','#2b8a73','#c0392b'][i%4]]));
+const dots=[[835,243],[856,360]];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const norm=s=>s.normalize('NFKC').toLowerCase().replace(/[\s、，,。.:：;；()\[\]【】\/\-_…·「」]/g,'');
+$('#cv').innerHTML=D.map(d=>{const [k,col]=d[4].split(':');return `<i class="d ${k}" style="left:${d[0]}px;top:${d[1]}px;width:${d[2]}px;height:${d[3]}px;${col?'background:'+col:''}"></i>`}).join('')
++dots.map(p=>`<span class="dt" style="left:${p[0]}px;top:${p[1]}px">……</span>`).join('')
++C.map((st,i)=>st.map(c=>`<span class="c ${c[4]||''}" data-s="${i}" data-a="${c[3]}" style="left:${c[0]}px;top:${c[1]}px;width:${c[2]}px;--c:${SC[i]}"><textarea rows="1" aria-label="填空"></textarea><span class="a">${c[3]}</span></span>`).join('')).join('');
+$('#tabs').innerHTML='<button class="tab" data-t="-1">全部</button>'+NAME.map((n,i)=>`<button class="tab" data-t="${i}">${n}</button>`).join('');
+const wrap=$('#wrap'),cv=$('#cv'),sz=$('#sz');
+let cur=-1,hideO=true,s=1;
+const act=()=>$$('.c:not(.off):not(.hid)');
+const say=t=>$('#msg').textContent=t;
+function setS(v){s=Math.min(2.2,Math.max(.25,v));cv.style.transform=`scale(${s})`;sz.style.width=1288*s+'px';sz.style.height=925*s+'px'}
+function fit(){setS(Math.min(1.2,wrap.clientWidth/1288))}
+function grow(){$$('.c textarea').forEach(t=>{t.style.height='auto';if(t.offsetParent)t.style.height=t.scrollHeight+'px'})}
+function stats(){const c=act(),f=c.filter(x=>x.querySelector('textarea').value.trim()).length;
+ $('#st').textContent=`已填 ${f}/${c.length}　正確 ${c.filter(x=>x.classList.contains('ok')).length}　錯誤 ${c.filter(x=>x.classList.contains('bad')).length}`}
+function apply(zoom){$$('.c').forEach(c=>{const o=cur>=0&&+c.dataset.s!==cur;c.classList.toggle('off',o&&!hideO);c.classList.toggle('hid',o&&hideO)});
+ $$('.tab').forEach(b=>b.classList.toggle('on',+b.dataset.t===cur));$('#oth').textContent='其他階段：'+(hideO?'隱藏':'顯示答案');
+ if(zoom){if(cur<0){fit();wrap.scrollTo(0,0)}else{const r=R[cur];setS(wrap.clientWidth/r[2]);wrap.scrollTo(r[0]*s,r[1]*s)}}
+ grow();stats()}
+function grade(c,force){const v=c.querySelector('textarea').value;if(!v.trim()&&!force)return;const ok=norm(v)===norm(c.dataset.a);c.classList.toggle('ok',ok);c.classList.toggle('bad',!ok)}
+function next(t){if(document.body.classList.contains('reveal'))return;const l=$$('.c:not(.off):not(.hid) textarea:not(:disabled)'),n=l[l.indexOf(t)+1];
+ if(n){n.focus();n.scrollIntoView({block:'center',inline:'center',behavior:'smooth'})}else{t.blur();say('已經是最後一格，可以按「交卷」。')}}
+cv.addEventListener('keydown',e=>{if(e.target.tagName!=='TEXTAREA'||e.key!=='Enter'||e.isComposing||e.keyCode===229)return;
+ e.preventDefault();if($('#mode').value==='now')grade(e.target.closest('.c'));stats();next(e.target)});
+cv.addEventListener('input',e=>{e.target.closest('.c').classList.remove('ok','bad');e.target.value=e.target.value.replace(/\n/g,'');
+ e.target.style.height='auto';e.target.style.height=e.target.scrollHeight+'px';stats()});
+$('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(b){cur=+b.dataset.t;apply(true);say('')}};
+$('#oth').onclick=()=>{hideO=!hideO;apply()};
+$('#show').onclick=()=>document.body.classList.add('reveal');
+$('#hide').onclick=()=>{document.body.classList.remove('reveal');grow()};
+$('#sub').onclick=()=>{document.body.classList.remove('reveal');const c=act();c.forEach(x=>grade(x,true));grow();stats();say(`得分 ${c.filter(x=>x.classList.contains('ok')).length} / ${c.length}`)};
+$('#redo').onclick=()=>{document.body.classList.remove('reveal');$$('.c').forEach(c=>{const t=c.querySelector('textarea');
+ if(c.classList.contains('ok'))t.disabled=true;else if(c.classList.contains('bad')){t.value='';c.classList.remove('bad')}});
+ grow();stats();const f=$('.c:not(.off):not(.hid) textarea:not(:disabled)');if(f)f.focus();say('已保留答對的格子，請重做錯題。')};
+$('#rst').onclick=()=>{document.body.classList.remove('reveal');$$('.c').forEach(c=>{const t=c.querySelector('textarea');t.value='';t.disabled=false;c.classList.remove('ok','bad')});grow();stats();say('')};
+$('#zi').onclick=()=>setS(s*1.2);$('#zo').onclick=()=>setS(s/1.2);
+addEventListener('resize',()=>{if(cur<0)fit()});
+fit();apply();
+</script>
+</body>
+</html>
